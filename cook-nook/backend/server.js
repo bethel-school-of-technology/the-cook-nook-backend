@@ -1,37 +1,33 @@
 const express = require('express'); 
 const cors = require('cors');
-const mongoose = require('mongoose'); 
 const bodyParser = require('body-parser');
+
 const app = express();
-const User = require('./models/users.model');
 
 app.use(cors()); 
+app.use(bodyParser.urlencoded({extened: true}));
 app.use(bodyParser.json()); 
-/* app.use('/home', require('./routes/home'));
-app.use('/user', require('./routes/user'));
- */
 
-app.get('/', (req, res) => {
-    res.send("Yep it's working");
+const dbConfig = require('./config/database.config.js');
+const mongoose = require('mongoose'); 
+
+mongoose.Promise = global.Promise; 
+
+mongoose.connect(dbConfig.url, {
+    useNewUrlParser: true
+}).then(() => {
+    console.log('Successfully connected to the database.');
+
+}).catch(err => {
+    console.log("Could not connect to the database. Exiting now."); 
+    process.exit();
 })
 
-app.post('/', (req, res, next) => {
-    console.log("Test1");
-    const user = new User({
-        username: req.body.username, 
-        password: req.body.password, 
-        email: req.body.email, 
-        phone: req.body.phone
-    })
-    console.log("Test2");
-    user.save(); 
-    console.log(user);
-})
+require('./app/routes/users.routes.js/index.js')(app);
 
-mongoose.connect(
-    "mongodb+srv://JanineParham:Buttrfly1!@cluster1-rhl99.mongodb.net/test?retryWrites=true&w=majority",
-    {useNewUrlParser: true}, {useUnifiedTypology: true}, 
-() =>console.log('Connected to DB')
-);
 
-app.listen(8080);
+
+
+app.listen(8080, () => {
+    console.log("Server is listening in on port 8080");
+});
