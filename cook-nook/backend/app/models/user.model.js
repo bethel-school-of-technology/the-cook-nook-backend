@@ -1,21 +1,63 @@
 const mongoose = require('mongoose'); 
 
-const UserSchema = mongoose.Schema({
-    userId: Number, 
+const UserSchema = mongoose.Schema({ 
     username: String, 
-    password: String, 
-    email: String, 
-    Recipes: [{
-        recipeId: Number, 
-        title: String, 
-        description: number, //determined by radio selection in front-end
-        timeToMake: String,
-        Ingredients: String, 
-        toolsNeeded: String, 
-        instructions: [{
-            id: number, 
-            name: String,
-            content: String
+    password: String,  
+    recipes: [{
+        bfast: [{
+            name: String, 
+            desc: String, 
+            time: String, 
+            ing: [],
+            toolsNeeded: [],
+            instructs: [{
+                name: "Step" + (i + 1), //Maybe?
+                subDesc: String
+            }],     
+        }], 
+        lunch: [{
+            name: String, 
+            desc: String, 
+            time: String, 
+            ing: [],
+            toolsNeeded: [],
+            instructs: [{
+                name: "Step" + (i + 1), //Maybe?
+                subDesc: String
+            }],     
+        }], 
+        dinner: [{
+            name: String, 
+            desc: String, 
+            time: String, 
+            ing: [],
+            toolsNeeded: [],
+            instructs: [{
+                name: "Step" + (i + 1), //Maybe?
+                subDesc: String
+            }],     
+        }], 
+        dessert: [{
+            name: String, 
+            desc: String, 
+            time: String, 
+            ing: [],
+            toolsNeeded: [],
+            instructs: [{
+                name: "Step" + (i + 1), //Maybe?
+                subDesc: String
+            }],     
+        }], 
+        bevs: [{
+            name: String, 
+            desc: String, 
+            time: String, 
+            ing: [],
+            toolsNeeded: [],
+            instructs: [{
+                name: "Step" + (i + 1), //Maybe?
+                subDesc: String
+            }],     
         }]
     }]
 })
