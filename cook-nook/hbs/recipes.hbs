@@ -1,10 +1,25 @@
-<h1>Recipes</h1>
-
-{{#each recipes}}
-<h2>{{description}}</h2>
-<h2>{{timeToMake}}</h2>
-<h2>{{ingredients}}</h2>
-<h2>{{instructions}}</h2>
+<h1>Breakfast Recipes</h1>
+<ul>
+{{#each bfast}}
+<li>{{name}}</li>
 {{/each}}
+</ul>
+<ul>
+    {{#each ing
+    <li>{{name}}
+        {{/each}}
+    </li>
+</ul>
+<ul>
+    {{#each toolsNeeded}}
+    <li>{{name}}</li>
+    {{/each}}
+</ul>
+<ul>
+    {{#each instructs}}
+    <li>{{name}}</li>
+    {{/each}}
+</ul>
+
 
 
