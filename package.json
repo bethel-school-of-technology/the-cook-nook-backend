@@ -1,0 +1,30 @@
+{
+  "name": "cooknookback",
+  "version": "1.0.0",
+  "description": "The back end for Cook Nook front end restful API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "the-cook-nook-backend"
+  },
+  "author": "Victoria Young and Janine Parham",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.2",
+    "morgan": "^1.9.1"
+  },
+  "keywords": [
+    "node",
+    "restful",
+    "api"
+  ],
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
