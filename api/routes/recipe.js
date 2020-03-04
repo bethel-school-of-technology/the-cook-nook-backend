@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const checkAuth = require('./middleware/check-auth'); //inserted into recipe routes so that only users can see their recipes still working on errors
 const Recipe = require("./models/recipe");
+const verifyToken = require('../middleware/verifyToken');
+
 
 //logged page see all recipes page//
-router.get('/', checkAuth, (req, res, next) => {
+router.get('/', verifyToken, (req, res, next) => {
     Recipe.find()
     .select('name type desc time ing toolsNeeded instructs _id')
     .exec()
@@ -21,10 +22,10 @@ router.get('/', checkAuth, (req, res, next) => {
                     ing: doc.ing,
                     toolsNeeded: doc.toolsNeeded,
                     instructs: doc.instructs,
-                    _id: doc._id,
+                    id: doc.id,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/home/logged/' + doc._id 
+                        url: 'http://localhost:3000/home/logged/' + doc.id 
                     }
                 }
             })
@@ -49,9 +50,9 @@ router.get('/', checkAuth, (req, res, next) => {
 });
 
 
-router.post('/add', checkAuth, (req, res, next) => {
+router.post('/add', verifyToken, (req, res, next) => {
     const recipe = new Recipe({
-        _id: new mongoose.Types.ObjectId(),
+        id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         type: req.body.type,
         desc: req.body.desc,
@@ -72,10 +73,10 @@ router.post('/add', checkAuth, (req, res, next) => {
             ing: result.ing,
             toolsNeeded: result.toolsNeeded,
             instructs: result.instructs,
-            _id: result._id,
+            id: result.id,
             request: {
                 type: 'GET',
-                url: 'http://localhost:3000/home/logged/' + result._id 
+                url: 'http://localhost:3000/home/logged/' + result.id 
             }
         }
     }).catch(err => {
@@ -88,7 +89,7 @@ router.post('/add', checkAuth, (req, res, next) => {
     })
 })
 
-router.get('/:recipeId', checkAuth, (req, res, next) => {
+router.get('/:recipeId', verifyToken, (req, res, next) => {
     const id = req.params.recipeId;
     Recipe.findById(id)
     .select('name type desc time ing toolsNeeded instructs _id')
@@ -114,7 +115,7 @@ router.get('/:recipeId', checkAuth, (req, res, next) => {
     });
 })
 
-router.patch('/edit/:recipeId', checkAuth, (req, res, next) => {
+router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
     const id = req.params.recipeId;
     const updateOps = {};
     for (const ops of req.body){
@@ -140,9 +141,9 @@ router.patch('/edit/:recipeId', checkAuth, (req, res, next) => {
     
 });
 
-router.delete('/:recipeId', checkAuth, (req, res, next) => {
-   const id = req.params.recipeId;
-   Recipe.remove({_id: id})
+router.delete('/:recipeId', verifyToken, (req, res, next) => {
+   const _id = req.params.recipeId;
+   Recipe.remove({id: _id})
    .exec()
    .then(result => {
        res.status(200).json({

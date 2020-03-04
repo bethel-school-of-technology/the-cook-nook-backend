@@ -3,7 +3,7 @@ const {mongooseAssociation} = require('mongoose-association');
 mongooseAssociation(mongoose);
 
 const recipeSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    id: mongoose.Schema.Types.ObjectId,
     name: { type: String, required: true},
     type: { type: String, required: true},
     desc: { type: String, required: true},

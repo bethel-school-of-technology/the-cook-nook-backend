@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 
-router.post('/', (req, res, next) => {
+router.post('/register', (req, res, next) => {
     User.find({username: req.body.username})
         .exec()
         .then(user =>{
@@ -23,7 +23,7 @@ router.post('/', (req, res, next) => {
                     } else {
                         const user = new User({
             
-                            _id: new mongoose.Types.ObjectId(), 
+                            id: new mongoose.Types.ObjectId(), 
                             username: req.body.username, 
                             password: hash
                         });
@@ -31,8 +31,16 @@ router.post('/', (req, res, next) => {
                         .save()
                         .then(result => {
                             console.log(result)
+                            const token = jwt.sign({
+                                userId: user[0].id,
+                                username: user[0].username, 
+                            }, process.env.JWT_KEY, 
+                            {
+                                expiresIn: '1h'
+                            })
                             res.status(201).json({
-                                message: 'User created'
+                                message: 'User created', 
+                                token: token
                             })            
                         })
                         .catch(err => {
@@ -66,16 +74,17 @@ router.post('/login', (req, res, next) => {
                 }
                 if (result) {
                     const token = jwt.sign({
-                        userId: user[0]._id,
+                        userId: user[0].id,
                         username: user[0].username, 
                     }, process.env.JWT_KEY, 
                     {
                         expiresIn: '1h'
                     });
-                    return res.status(200).json({
-                        message: 'Auth success' ,
+                    res.status(200).json({
+                        message: 'Auth success', 
                         token: token
                     });
+
                 }
                 res.status(401).json({
                     message: 'Auth failed'
@@ -106,11 +115,5 @@ router.delete('/:userId', (req, res, next) => {
         })
     })
 });
-
-//code provided by Victoria 
-router.get('/logout', function(req, res, next) {
-    res.cookie('jwt', '', {expires: new Date(0)});
-    res.send('Logged out')
-})
 
 module.exports = router;
