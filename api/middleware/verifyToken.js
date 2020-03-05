@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-module.exports
+
 
 function verifyToken(req, res, next) {
     if(!req.headers.authorization){
@@ -20,6 +20,8 @@ function verifyToken(req, res, next) {
             message: 'Unauthorized Request'
         })
     }
-    req.id = payload.subject //was userId but not sure that matches
+    req.userId = payload.subject //was userId but not sure that matches
     next()
 }
+
+module.exports = verifyToken;
