@@ -85,10 +85,10 @@ router.post('/login', (req, res, next) => {
                         token: token
                     });
 
-                }
-                res.status(401).json({
+                } else
+                {res.status(401).json({
                     message: 'Auth failed'
-                });
+                })};
                 });
             })
             .catch(err => {
