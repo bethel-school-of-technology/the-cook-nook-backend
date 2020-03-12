@@ -7,6 +7,8 @@ const recipeSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    id: {type: Number,
+        autoIncrement: true},
     name: { type: String, required: true},
     type: { type: String, required: true},
     desc: { type: String, required: true},

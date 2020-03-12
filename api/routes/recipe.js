@@ -11,10 +11,8 @@ router.get('/', verifyToken, (req, res, next) => {
     .populate('user')
     .exec()
     .then(docs => {
-       
-           res.status(200).json(docs); 
-        
-    })
+       res.status(200).json(docs); 
+        })
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -90,14 +88,22 @@ router.get('/:recipeId', verifyToken, (req, res, next) => {
 })
 
 router.patch('/edit/:recipeId', (req, res, next) => {
-    const id = parseInt(req.params.recipeId);
+    const id = req.params.recipeId;
     const updateOps = {};
-    /* for (const ops of req.body){
+    for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
-    } */
-    Recipe.update(req.body, {where: {_id: id}}/* ,{$set: updateOps }*/)
+    }
+    Recipe.update({_id: id}, {$set: updateOps})
     .exec()
-    
+    .then(result => {
+        console.log(result);
+        res.status(200).json({
+            message: "Recipe Updated!",
+            request: {
+                type: 'GET',
+                url: "http://localhost:3000/home/logged/" + id            }
+        });
+    })
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -107,8 +113,9 @@ router.patch('/edit/:recipeId', (req, res, next) => {
     
 });
 
-router.delete('/delete/:_id', (req, res, next) => {
-   Recipe.findByIdAndRemove(req.params._id)
+router.delete('/:recipeId', (req, res, next) => {
+    const id = req.params.recipeId;
+   Recipe.remove({_id: id})
    .exec()
    .then(result => {
        res.status(200).json({
@@ -135,5 +142,6 @@ router.delete('/delete/:_id', (req, res, next) => {
    });
     
 });
+
 
 module.exports = router;
