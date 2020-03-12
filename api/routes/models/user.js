@@ -1,17 +1,21 @@
 const mongoose = require('mongoose'); 
-const {mongooseAssociation} = require('mongoose-association'); 
-mongooseAssociation(mongoose);
+//const {mongooseAssociation} = require('mongoose-association'); 
+//mongooseAssociation(mongoose);
 
 const userSchema = mongoose.Schema({
     
-    _id: mongoose.Schema.Types.ObjectId,
+    id: mongoose.Schema.Types.ObjectId,
     username: {
         type: String, 
         require: true, 
         unique: true},
-    password: {type: String, require: true}
+    password: {type: String, require: true},
+    recipes: [{
+        type: [String], 
+        ref: "Recipe"
+    }]
 }); 
 
-userSchema.belongsTo('Recipe', {as: 'owner'}); //possible association code
+//userSchema.belongsTo('Recipe', {as: 'owner'}); //possible association code
 
 module.exports = mongoose.model('User', userSchema);

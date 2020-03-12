@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 const Recipe = require("./models/recipe");
 const verifyToken = require('../middleware/verifyToken');
 
-//logged page see all recipes page//
 router.get('/', verifyToken, (req, res, next) => {
     Recipe.find()
     .select('name type desc time ing toolsNeeded instructs _id')
     .populate('user')
     .exec()
     .then(docs => {
+
                 res.status(200).json(docs);
             })
         
@@ -26,7 +26,8 @@ router.get('/', verifyToken, (req, res, next) => {
 
 router.post('/add', verifyToken, (req, res, next) => {
     const recipe = new Recipe({
-        _id: new mongoose.Types.ObjectId(),
+        user: req.userId,
+        id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         type: req.body.type,
         desc: req.body.desc,
@@ -47,20 +48,19 @@ router.post('/add', verifyToken, (req, res, next) => {
             ing: result.ing,
             toolsNeeded: result.toolsNeeded,
             instructs: result.instructs,
-            _id: result._id,
+            id: result.id,
             request: {
                 type: 'GET',
-                url: 'http://localhost:3000/home/logged/' + result._id 
+                url: 'http://localhost:3000/home/logged/' + result.id 
             }
         }
+    })
     }).catch(err => {
         console.log(err);
         res.status(500).json({
             error: err
         });
     });
-   
-    })
 })
 
 router.get('/:recipeId', verifyToken, (req, res, next) => {
@@ -89,7 +89,9 @@ router.get('/:recipeId', verifyToken, (req, res, next) => {
     });
 })
 
+
 router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
+
     const id = req.params.recipeId;
     const updateOps = {};
     for (const ops of req.body){
@@ -115,8 +117,10 @@ router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
     
 });
 
+
 router.delete('/:recipeId', verifyToken, (req, res, next) => {
    const id = req.params.recipeId;
+
    Recipe.remove({_id: id})
    .exec()
    .then(result => {
@@ -145,4 +149,6 @@ router.delete('/:recipeId', verifyToken, (req, res, next) => {
     
 });
 
+
 module.exports = router;
+

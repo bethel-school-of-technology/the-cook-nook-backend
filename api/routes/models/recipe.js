@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
-const {mongooseAssociation} = require('mongoose-association'); 
-mongooseAssociation(mongoose);
+//const {mongooseAssociation} = require('mongoose-association'); 
+//mongooseAssociation(mongoose);
 
 const recipeSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    id: {type: Number,
+        autoIncrement: true},
     name: { type: String, required: true},
     type: { type: String, required: true},
     desc: { type: String, required: true},
@@ -13,6 +18,6 @@ const recipeSchema = mongoose.Schema({
     instructs: {type: String, required: true}
 });
 
-recipeSchema.hasOne('User') //possible association code
+//recipeSchema.hasOne('User') //possible association code
 
 module.exports = mongoose.model('Recipe', recipeSchema)
