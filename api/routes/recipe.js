@@ -5,40 +5,14 @@ const Recipe = require("./models/recipe");
 const verifyToken = require('../middleware/verifyToken');
 
 
-//logged page see all recipes page//
 router.get('/', verifyToken, (req, res, next) => {
     Recipe.find()
     .select('name type desc time ing toolsNeeded instructs _id')
+    .populate('user')
     .exec()
     .then(docs => {
-        const response = {
-            count: docs.length,
-            recipes: docs.map(doc => {
-                return {
-                    name: doc.name,
-                    type: doc.type,
-                    desc: doc.desc,
-                    time: doc.time,
-                    ing: doc.ing,
-                    toolsNeeded: doc.toolsNeeded,
-                    instructs: doc.instructs,
-                    id: doc.id,
-                    request: {
-                        type: 'GET',
-                        url: 'http://localhost:3000/home/logged/' + doc.id 
-                    }
-                }
-            })
-        };
-       // console.log(docs);
-       // if(docs.length >= 0) {
-           res.status(200).json(response); 
-       // } 
-   //     else {
-   //         res.status(404).json({
-   //             message:"No entries found"
-   //         });
-   //     }
+       
+           res.status(200).json(docs); 
         
     })
     .catch(err => {
@@ -52,6 +26,7 @@ router.get('/', verifyToken, (req, res, next) => {
 
 router.post('/add', verifyToken, (req, res, next) => {
     const recipe = new Recipe({
+        user: req.userId,
         id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         type: req.body.type,
@@ -79,14 +54,13 @@ router.post('/add', verifyToken, (req, res, next) => {
                 url: 'http://localhost:3000/home/logged/' + result.id 
             }
         }
+    })
     }).catch(err => {
         console.log(err);
         res.status(500).json({
             error: err
         });
     });
-   
-    })
 })
 
 router.get('/:recipeId', verifyToken, (req, res, next) => {
@@ -115,23 +89,15 @@ router.get('/:recipeId', verifyToken, (req, res, next) => {
     });
 })
 
-router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
-    const id = req.params.recipeId;
+router.patch('/edit/:recipeId', (req, res, next) => {
+    const id = parseInt(req.params.recipeId);
     const updateOps = {};
-    for (const ops of req.body){
+    /* for (const ops of req.body){
         updateOps[ops.propName] = ops.value;
-    }
-    Recipe.update({_id: id}, {$set: updateOps})
+    } */
+    Recipe.update(req.body, {where: {_id: id}}/* ,{$set: updateOps }*/)
     .exec()
-    .then(result => {
-        console.log(result);
-        res.status(200).json({
-            message: "Recipe Updated!",
-            request: {
-                type: 'GET',
-                url: "http://localhost:3000/home/logged/" + id            }
-        });
-    })
+    
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -141,9 +107,8 @@ router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
     
 });
 
-router.delete('/:recipeId', verifyToken, (req, res, next) => {
-   const _id = req.params.recipeId;
-   Recipe.remove({id: _id})
+router.delete('/delete/:_id', (req, res, next) => {
+   Recipe.findByIdAndRemove(req.params._id)
    .exec()
    .then(result => {
        res.status(200).json({

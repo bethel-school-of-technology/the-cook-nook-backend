@@ -18,7 +18,7 @@ function verifyToken(req, res, next) {
             message: 'Unauthorized Request'
         })
     }
-    req.userId = payload.subject //was userId but not sure that matches
+    req.userId = payload.subject 
     next()
 }
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('./models/user');
+const recipeSchema = require('./models/recipe');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -25,22 +26,15 @@ router.post('/register', (req, res, next) => {
             
                             id: new mongoose.Types.ObjectId(), 
                             username: req.body.username, 
-                            password: hash
+                            password: hash, 
+                            recipes: [String]
                         });
                         user
                         .save()
                         .then(result => {
                             console.log(result)
-                            const token = jwt.sign({
-                                userId: user[0].id,
-                                username: user[0].username, 
-                            }, process.env.JWT_KEY, 
-                            {
-                                expiresIn: '1h'
-                            })
                             res.status(201).json({
-                                message: 'User created', 
-                                token: token
+                                message: 'User created'
                             })            
                         })
                         .catch(err => {

@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
         unique: true},
     password: {type: String, require: true},
     recipes: [{
-        type: mongoose.Schema.Types.ObjectId, 
+        type: [String], 
         ref: "Recipe"
     }]
 }); 
