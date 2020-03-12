@@ -4,15 +4,17 @@ const mongoose = require('mongoose');
 const Recipe = require("./models/recipe");
 const verifyToken = require('../middleware/verifyToken');
 
-
 router.get('/', verifyToken, (req, res, next) => {
     Recipe.find()
     .select('name type desc time ing toolsNeeded instructs _id')
     .populate('user')
     .exec()
     .then(docs => {
-       res.status(200).json(docs); 
-        })
+
+                res.status(200).json(docs);
+            })
+        
+    })
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -87,7 +89,9 @@ router.get('/:recipeId', verifyToken, (req, res, next) => {
     });
 })
 
-router.patch('/edit/:recipeId', (req, res, next) => {
+
+router.patch('/edit/:recipeId', verifyToken, (req, res, next) => {
+
     const id = req.params.recipeId;
     const updateOps = {};
     for (const ops of req.body){
@@ -113,8 +117,10 @@ router.patch('/edit/:recipeId', (req, res, next) => {
     
 });
 
-router.delete('/:recipeId', (req, res, next) => {
-    const id = req.params.recipeId;
+
+router.delete('/:recipeId', verifyToken, (req, res, next) => {
+   const id = req.params.recipeId;
+
    Recipe.remove({_id: id})
    .exec()
    .then(result => {
@@ -145,3 +151,4 @@ router.delete('/:recipeId', (req, res, next) => {
 
 
 module.exports = router;
+
